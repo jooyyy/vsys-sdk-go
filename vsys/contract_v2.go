@@ -14,10 +14,10 @@ func (c *ContractV2) BuildSupersedeData(newIssuer string, newRegulator string) [
 	return data.Result()
 }
 
-func (c *ContractV2) BuildUpdateListData() []byte {
+func (c *ContractV2) BuildUpdateListData(address string, add bool) []byte {
 	data := DataEncoder{}
 	data.EncodeArgAmount(2)
-	data.Encode(c.Address, DeTypeAddress)
-	data.Encode(c.AddToList, DeTypeBoolean)
+	data.Encode(address, DeTypeAddress)
+	data.Encode(add, DeTypeBoolean)
 	return data.Result()
 }

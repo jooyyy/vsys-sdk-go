@@ -21,8 +21,6 @@ type NFTIssueResponse struct {
 
 type NFTContract struct {
 	ContractId  string
-	Recipient string
-	Index int
 	Description string
 }
 
@@ -47,17 +45,17 @@ func (c *NFTContract) BuildRegisterData() []byte {
 	return data.result
 }
 
-func (c *NFTContract) BuildIssue() []byte {
+func (c *NFTContract) BuildIssue(nftDesc string) []byte {
 	data := DataEncoder{}
 	data.EncodeArgAmount(1)
-	data.Encode(c.Description, DeTypeShortText)
+	data.Encode(nftDesc, DeTypeShortText)
 	return data.result
 }
 
-func (c *NFTContract) BuildSend() []byte {
+func (c *NFTContract) BuildSend(recipient string, index int) []byte {
 	data := DataEncoder{}
 	data.EncodeArgAmount(2)
-	data.Encode(c.Recipient, DeTypeAddress)
-	data.Encode(c.Index, DeTypeInt32)
+	data.Encode(recipient, DeTypeAddress)
+	data.Encode(index, DeTypeInt32)
 	return data.result
 }
