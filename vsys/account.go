@@ -206,7 +206,7 @@ func (acc *Account) BuildExecuteContract(contractId string, funcIdx int16, funcD
 	return transaction
 }
 
-// BuildExecuteContract build SendToken transaction
+// BuildSendTokenTransaction build SendToken transaction
 func (acc *Account) BuildSendTokenTransaction(tokenId string, recipient string, amount int64, isSplitSupported bool, attachment string) *Transaction {
 	a := &Contract{
 		ContractId: TokenId2ContractId(tokenId),
@@ -219,6 +219,16 @@ func (acc *Account) BuildSendTokenTransaction(tokenId string, recipient string, 
 		funcIdx = FuncidxSendSplit
 	}
 	transaction := NewExecuteTransaction(a.ContractId, int16(funcIdx), Base58Encode(funcData), attachment)
+	transaction.SenderPublicKey = acc.PublicKey()
+	transaction.Signature = acc.SignData(transaction.BuildTxData())
+	return transaction
+}
+
+func (acc *Account) BuildRegisterLockContractTransaction(tokenId string, desc string) *Transaction {
+	lockContract := LockContract{
+		TokenId: tokenId,
+	}
+	transaction := NewRegisterTransaction(TokenContractLock, Base58Encode(lockContract.BuildRegisterData()), desc)
 	transaction.SenderPublicKey = acc.PublicKey()
 	transaction.Signature = acc.SignData(transaction.BuildTxData())
 	return transaction

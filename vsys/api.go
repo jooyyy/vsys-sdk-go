@@ -37,12 +37,16 @@ const (
 	ApiGetAddressValid   = "/addresses/validate/%s"
 	ApiGetAddressBalance = "/addresses/balance/%s"
 
-	//contract
+	// contract
 	ApiContractBroadcastRegister = "/contract/broadcast/register"
 	ApiContractBroadcastExecute  = "/contract/broadcast/execute"
 	ApiContractInfo              = "/contract/info/%s"
 	ApiTokenInfo                 = "/contract/tokenInfo/%s"
 	ApiContractTokenBalance      = "/contract/balance/%s/%s" // /contract/balance/{address}/{tokenId}
+
+	// nft
+	ApiNFTGetLatestIndex = "/contract/lastTokenIndex/%s"
+	ApiNFTGetByIndex = "/contract/contractId/%s/tokenIndex/%d"
 )
 
 type VsysApi struct {

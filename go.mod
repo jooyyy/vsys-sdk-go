@@ -1,4 +1,4 @@
-module github.com/walkbean/vsys-sdk-go
+module github.com/jooyyy/vsys-sdk-go
 
 go 1.13
 

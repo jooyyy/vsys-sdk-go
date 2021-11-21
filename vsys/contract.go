@@ -42,7 +42,12 @@ const (
 	DeTypeInt32           = 0x04
 	DeTypeShortText       = 0x05
 	DeTypeContractAccount = 0x06
-	DETypeAccount         = 0x07
+	DeTypeAccount         = 0x07
+	DeTypeTokenId  		  = 0x08
+	DeTypeTimestamp		  = 0x09
+	DeTypeBoolean  		  = 0x0A
+	DeTypeShortByte		  = 0x0B
+	DeTypeBalance  		  = 0x0C
 )
 
 func (c *Contract) BuildRegisterData() []byte {
@@ -52,6 +57,14 @@ func (c *Contract) BuildRegisterData() []byte {
 	data.Encode(c.Unity, DeTypeAmount)
 	data.Encode(c.TokenDescription, DeTypeShortText)
 
+	return data.Result()
+}
+
+// BuildSupersedeData transfer issuing right of Contract
+func (c *Contract) BuildSupersedeData(address string) []byte {
+	data := DataEncoder{}
+	data.EncodeArgAmount(1)
+	data.Encode(address, DeTypeAddress)
 	return data.Result()
 }
 
@@ -185,11 +198,11 @@ func (de *DataEncoder) EncodeArgAmount(amount int16) {
 
 func (de *DataEncoder) Encode(data interface{}, dataEntryType byte) {
 	switch dataEntryType {
-	case DeTypePublicKey, DeTypeAddress, DeTypeContractAccount, DETypeAccount:
+	case DeTypePublicKey, DeTypeAddress, DeTypeContractAccount, DeTypeAccount, DeTypeTokenId:
 		bytes := Base58Decode(data.(string))
 		de.result = append(de.result, dataEntryType)
 		de.result = append(de.result, bytes...)
-	case DeTypeAmount:
+	case DeTypeAmount, DeTypeTimestamp:
 		bytes := uint64ToByte(data.(int64))
 		de.result = append(de.result, dataEntryType)
 		de.result = append(de.result, bytes...)
@@ -197,10 +210,19 @@ func (de *DataEncoder) Encode(data interface{}, dataEntryType byte) {
 		bytes := uint32ToByte(data.(int32))
 		de.result = append(de.result, dataEntryType)
 		de.result = append(de.result, bytes...)
-	case DeTypeShortText:
+	case DeTypeShortText, DeTypeShortByte:
 		bytes := []byte(data.(string))
 		de.result = append(de.result, dataEntryType)
 		de.result = append(de.result, bytesToByteArrayWithSize(bytes)...)
+	case DeTypeBoolean:
+		v, _ := data.(bool)
+		if v {
+			de.result = append(de.result, dataEntryType)
+			de.result = append(de.result, 0x01)
+		}else {
+			de.result = append(de.result, dataEntryType)
+			de.result = append(de.result, 0x00)
+		}
 	default:
 	}
 }
@@ -216,7 +238,7 @@ func (de *DataEncoder) Decode(data []byte) (list []DataEntry) {
 				Value: Base58Encode(data[i : i+32]),
 			})
 			i = i + 32
-		case DeTypeAddress, DeTypeContractAccount, DETypeAccount:
+		case DeTypeAddress, DeTypeContractAccount, DeTypeAccount:
 			list = append(list, DataEntry{
 				Type:  int8(deType),
 				Value: Base58Encode(data[i : i+26]),
@@ -234,7 +256,7 @@ func (de *DataEncoder) Decode(data []byte) (list []DataEntry) {
 				Value: int64(binary.BigEndian.Uint32(data[i : i+4])),
 			})
 			i = i + 4
-		case DeTypeShortText:
+		case DeTypeShortText, DeTypeShortByte:
 			length := int(binary.BigEndian.Uint16(data[i : i+2]))
 			i = i + 2
 			list = append(list, DataEntry{
@@ -242,6 +264,24 @@ func (de *DataEncoder) Decode(data []byte) (list []DataEntry) {
 				Value: string(data[i : i+length]),
 			})
 			i = i + length
+		case DeTypeTokenId:
+			list = append(list, DataEntry{
+				Type:  int8(deType),
+				Value: Base58Encode(data[i : i+30]),
+			})
+			i = i + 30
+		case DeTypeTimestamp:
+			list = append(list, DataEntry{
+				Type:  int8(deType),
+				Value: int64(binary.BigEndian.Uint64(data[i : i+8])),
+			})
+			i = i + 8
+		case DeTypeBoolean:
+			list = append(list, DataEntry{
+				Type:  int8(deType),
+				Value: int8(data[i]),
+			})
+			i = i + 1
 		}
 	}
 	return list
