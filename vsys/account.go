@@ -198,6 +198,21 @@ func (acc *Account) BuildRegisterContract(contract string, max int64, unity int6
 	return transaction
 }
 
+// BuildRegisterContractV2 build RegisterContract transaction
+func (acc *Account) BuildRegisterContractV2(contract string, max int64, unity int64, tokenDescription string, contractDescription string) *Transaction {
+	c := &Contract{
+		Max:              max * unity,
+		Unity:            unity,
+		TokenDescription: tokenDescription,
+	}
+	data := c.BuildRegisterData()
+	transaction := NewRegisterTransaction(contract, Base58Encode(data), contractDescription)
+	transaction.SenderPublicKey = acc.PublicKey()
+	transaction.Signature = acc.SignData(transaction.BuildTxData())
+	return transaction
+}
+
+
 // BuildExecuteContract build ExecuteContract transaction
 func (acc *Account) BuildExecuteContract(contractId string, funcIdx int16, funcData []byte, attachment string) *Transaction {
 	transaction := NewExecuteTransaction(contractId, funcIdx, Base58Encode(funcData), attachment)
@@ -229,6 +244,14 @@ func (acc *Account) BuildRegisterLockContractTransaction(tokenId string, desc st
 		TokenId: tokenId,
 	}
 	transaction := NewRegisterTransaction(TokenContractLock, Base58Encode(lockContract.BuildRegisterData()), desc)
+	transaction.SenderPublicKey = acc.PublicKey()
+	transaction.Signature = acc.SignData(transaction.BuildTxData())
+	return transaction
+}
+
+func (acc *Account) BuildRegisterNFTContractTransaction(contract string, desc string) *Transaction {
+	nftContract := NFTContract{}
+	transaction := NewRegisterTransaction(contract, Base58Encode(nftContract.BuildRegisterData()), desc)
 	transaction.SenderPublicKey = acc.PublicKey()
 	transaction.Signature = acc.SignData(transaction.BuildTxData())
 	return transaction
