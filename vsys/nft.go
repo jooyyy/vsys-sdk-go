@@ -52,7 +52,7 @@ func (c *NFTContract) BuildIssue(nftDesc string) []byte {
 	return data.result
 }
 
-func (c *NFTContract) BuildSend(recipient string, index int) []byte {
+func (c *NFTContract) BuildSend(recipient string, index int32) []byte {
 	data := DataEncoder{}
 	data.EncodeArgAmount(2)
 	data.Encode(recipient, DeTypeAddress)
