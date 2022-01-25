@@ -20,7 +20,7 @@ type Transaction struct {
 	ContractId    string `json:"contractId,omitempty"`
 	TokenIdx      int32  `json:"tokenIdx,omitempty"`
 	Description   string `json:"description,omitempty"`
-	FunctionIndex int16  `json:"functionIndex,omitempty"`
+	FunctionIndex int16  `json:"functionIndex"`
 	FunctionData  string `json:"functionData,omitempty"`
 	txType        uint8
 }
