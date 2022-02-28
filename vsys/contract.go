@@ -19,6 +19,8 @@ type Contract struct {
 	NewUnity            int64  // split newUnity
 	NewIssuer           string // supersede newIssuer
 
+	SenderAddress 		string
+
 	Textual   Textual // [init func, user defined func, stateVar]
 	Functions []Func
 }
@@ -96,7 +98,24 @@ func (c *Contract) BuildDestroyData() []byte {
 	data := DataEncoder{}
 	data.EncodeArgAmount(1)
 	data.Encode(c.Amount, DeTypeAmount)
+	return data.Result()
+}
 
+func (c *Contract) BuildDepositData(sender string, contract string, amount int64) []byte {
+	data := DataEncoder{}
+	data.EncodeArgAmount(3)
+	data.Encode(sender, DeTypeAddress)
+	data.Encode(contract, DeTypeContractAccount)
+	data.Encode(amount, DeTypeAmount)
+	return data.Result()
+}
+
+func (c *Contract) BuildWithdrawData(contract string, recipient string, amount int64) []byte {
+	data := DataEncoder{}
+	data.EncodeArgAmount(3)
+	data.Encode(contract, DeTypeContractAccount)
+	data.Encode(recipient, DeTypeAddress)
+	data.Encode(amount, DeTypeAmount)
 	return data.Result()
 }
 
@@ -137,6 +156,22 @@ func (c *Contract) DecodeSupersede(data []byte) {
 	de := DataEncoder{}
 	list := de.Decode(data)
 	c.NewIssuer = list[0].Value.(string)
+}
+
+func (c *Contract) DecodeDeposit(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.SenderAddress = list[0].Value.(string)
+	c.ContractId = list[1].Value.(string)
+	c.Amount = list[2].Value.(int64)
+}
+
+func (c *Contract) DecodeWithdraw(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.ContractId = list[0].Value.(string)
+	c.Recipient = list[1].Value.(string)
+	c.Amount = list[2].Value.(int64)
 }
 
 func (c *Contract) DecodeTexture() {
