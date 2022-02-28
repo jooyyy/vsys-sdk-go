@@ -2,6 +2,10 @@ package vsys
 
 import "time"
 
+const (
+	FuncidxLock    = 0
+)
+
 type LockContract struct {
 	TokenId  	string
 }
