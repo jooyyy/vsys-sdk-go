@@ -61,7 +61,11 @@ func getErrResp(resp *http.Response, body []byte) (err error) {
 		if err := json.Unmarshal(body, &errResp); err != nil {
 			return errors.New("StatusCodeError: " + resp.Status)
 		} else {
-			return errors.New(errResp.Message)
+			if resp.StatusCode == 404 {
+				return errors.New(errResp.Details)
+			}else {
+				return errors.New(errResp.Message)
+			}
 		}
 	}
 	return nil

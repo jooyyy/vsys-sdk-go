@@ -76,6 +76,8 @@ type Proof struct {
 type CommonResp struct {
 	Error   int    `json:"error"`
 	Message string `json:"message"`
+	Status  string `json:"status,omitempty"`
+	Details string `json:"details,omitempty"`
 }
 
 func (a *VsysApi) Post(path string, data interface{}) ([]byte, error) {
