@@ -8,6 +8,7 @@ const (
 
 type LockContract struct {
 	TokenId  	string
+	Timestamp   int64
 }
 
 func (c *LockContract) BuildRegisterData() []byte {
@@ -22,4 +23,10 @@ func (c *LockContract) BuildLockData(timestamp time.Time) []byte {
 	data.EncodeArgAmount(1)
 	data.Encode(timestamp.UnixNano(), DeTypeTimestamp)
 	return data.result
+}
+
+func (c *LockContract) DecodeLock(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.Timestamp = list[0].Value.(int64)
 }
