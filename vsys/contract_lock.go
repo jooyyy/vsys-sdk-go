@@ -19,6 +19,34 @@ type LockContract struct {
 	Timestamp int64
 }
 
+type LockResp struct {
+	ContractId string `json:"contractId"`
+	Key        string `json:"key"`
+	Height     int64  `json:"height"`
+	DbName     string `json:"dbName"`
+	DateType   string `json:"dateType"`
+}
+
+type LockMakerResp struct {
+	LockResp
+	Value string `json:"value"`
+}
+
+type LockTokenIdResp struct {
+	LockResp
+	Value string `json:"value"`
+}
+
+type LockBalanceResp struct {
+	LockResp
+	Value int64 `json:"value"`
+}
+
+type LockTimeResp struct {
+	LockResp
+	Value int64 `json:"value"`
+}
+
 func (c *LockContract) BuildRegisterData() []byte {
 	data := DataEncoder{}
 	data.EncodeArgAmount(1)

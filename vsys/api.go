@@ -43,10 +43,11 @@ const (
 	ApiContractInfo              = "/contract/info/%s"
 	ApiTokenInfo                 = "/contract/tokenInfo/%s"
 	ApiContractTokenBalance      = "/contract/balance/%s/%s" // /contract/balance/{address}/{tokenId}
+	ApiContractData              = "/contract/data/%s/%s"
 
 	// nft
 	ApiNFTGetLatestIndex = "/contract/lastTokenIndex/%s"
-	ApiNFTGetByIndex = "/contract/contractId/%s/tokenIndex/%d"
+	ApiNFTGetByIndex     = "/contract/contractId/%s/tokenIndex/%d"
 )
 
 type VsysApi struct {
@@ -135,7 +136,7 @@ func SendExecuteContractTx(tx *Transaction) (resp TransactionResponse, err error
 
 // txType eg: TxTypePayment | TxTypeLeasing
 // txType <= 0 will return all kind of transactions
-func GetTransactionList(address string,limit int64, offset int64, txType int64) (TxHistoryList, error){
+func GetTransactionList(address string, limit int64, offset int64, txType int64) (TxHistoryList, error) {
 	params := url.Values{}
 	params.Set("address", address)
 	if txType > 0 {
