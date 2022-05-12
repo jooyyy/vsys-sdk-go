@@ -46,7 +46,7 @@ const (
 
 	// nft
 	ApiNFTGetLatestIndex = "/contract/lastTokenIndex/%s"
-	ApiNFTGetByIndex = "/contract/contractId/%s/tokenIndex/%d"
+	ApiNFTGetByIndex     = "/contract/contractId/%s/tokenIndex/%d"
 )
 
 type VsysApi struct {
@@ -71,6 +71,7 @@ type Proof struct {
 	ProofType string `json:"proofType"`
 	PublicKey string `json:"publicKey"`
 	Signature string `json:"signature"`
+	Address   string `json:"address"`
 }
 
 type CommonResp struct {
@@ -135,7 +136,7 @@ func SendExecuteContractTx(tx *Transaction) (resp TransactionResponse, err error
 
 // txType eg: TxTypePayment | TxTypeLeasing
 // txType <= 0 will return all kind of transactions
-func GetTransactionList(address string,limit int64, offset int64, txType int64) (TxHistoryList, error){
+func GetTransactionList(address string, limit int64, offset int64, txType int64) (TxHistoryList, error) {
 	params := url.Values{}
 	params.Set("address", address)
 	if txType > 0 {
