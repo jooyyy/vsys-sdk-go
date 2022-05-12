@@ -43,6 +43,7 @@ const (
 	ApiContractInfo              = "/contract/info/%s"
 	ApiTokenInfo                 = "/contract/tokenInfo/%s"
 	ApiContractTokenBalance      = "/contract/balance/%s/%s" // /contract/balance/{address}/{tokenId}
+	ApiContractData              = "/contract/data/%s/%s"
 
 	// nft
 	ApiNFTGetLatestIndex = "/contract/lastTokenIndex/%s"
