@@ -20,8 +20,11 @@ type NFTIssueResponse struct {
 }
 
 type NFTContract struct {
-	ContractId  string
-	Description string
+	SenderAddress string
+	TokenIndex    int32
+	Recipient     string
+	ContractId    string
+	Description   string
 }
 
 func BuildIssueData(tokenDescription string) []byte {
@@ -37,6 +40,40 @@ func BuildSendData(recipient string, nftIndex int32) []byte {
 	data.Encode(recipient, DeTypeAddress)
 	data.Encode(nftIndex, DeTypeInt32)
 	return data.Result()
+}
+
+func BuildDepositData(sender string, contract string, index int32) []byte {
+	data := DataEncoder{}
+	data.EncodeArgAmount(3)
+	data.Encode(sender, DeTypeAddress)
+	data.Encode(contract, DeTypeContractAccount)
+	data.Encode(index, DeTypeInt32)
+	return data.Result()
+}
+
+func BuildWithdrawData(contract string, recipient string, index int32) []byte {
+	data := DataEncoder{}
+	data.EncodeArgAmount(3)
+	data.Encode(contract, DeTypeContractAccount)
+	data.Encode(recipient, DeTypeAddress)
+	data.Encode(index, DeTypeInt32)
+	return data.Result()
+}
+
+func (c *NFTContract) DecodeDepositData(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.SenderAddress = list[0].Value.(string)
+	c.ContractId = list[1].Value.(string)
+	c.TokenIndex = list[2].Value.(int32)
+}
+
+func (c *NFTContract) DecodeWithdrawData(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.ContractId = list[0].Value.(string)
+	c.Recipient = list[1].Value.(string)
+	c.TokenIndex = list[2].Value.(int32)
 }
 
 func (c *NFTContract) BuildRegisterData() []byte {
