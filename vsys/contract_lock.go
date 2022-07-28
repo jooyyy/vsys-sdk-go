@@ -61,6 +61,12 @@ func (c *LockContract) BuildLockData(timestamp time.Time) []byte {
 	return data.result
 }
 
+func (c *LockContract) DecodeRegister(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.TokenId = list[0].Value.(string)
+}
+
 func (c *LockContract) DecodeLock(data []byte) {
 	de := DataEncoder{}
 	list := de.Decode(data)
