@@ -60,6 +60,27 @@ func BuildWithdrawData(contract string, recipient string, index int32) []byte {
 	return data.Result()
 }
 
+func (c *NFTContract) DecodeIssueData(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.Description = list[0].Value.(string)
+}
+
+func (c *NFTContract) DecodeSendData(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.Recipient = list[0].Value.(string)
+	c.TokenIndex = list[1].Value.(int32)
+}
+
+func (c *NFTContract) DecodeTransferData(data []byte) {
+	de := DataEncoder{}
+	list := de.Decode(data)
+	c.SenderAddress = list[0].Value.(string)
+	c.Recipient = list[1].Value.(string)
+	c.TokenIndex = list[2].Value.(int32)
+}
+
 func (c *NFTContract) DecodeDepositData(data []byte) {
 	de := DataEncoder{}
 	list := de.Decode(data)
